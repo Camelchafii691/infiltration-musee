@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="IN•FILTRATION — jeu p5.js de steering behaviors dans un musée de nuit.">
+  <title>IN•FILTRATION — Voleur contre gardes</title>
+  <meta name="theme-color" content="#130e20">
+  <link rel="stylesheet" href="style.css?v=restart-confirm-1">
+</head>
+<body class="menu-open">
+  <main class="shell">
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">SIMULATION D’IA RÉACTIVE · MUSÉE 02:13</p>
+        <h1>IN<span>•</span>FILTRATION</h1>
+      </div>
+      <div class="mission-status" aria-live="polite">
+        <span class="status-dot"></span>
+        <strong id="missionLabel">INFILTRATION</strong>
+        <small id="nightLabel">NUIT 01</small>
+      </div>
+      <button id="pauseButton" type="button" class="ghost" aria-label="Mettre en pause">Ⅱ PAUSE</button>
+      <button id="detailsButton" type="button" class="ghost" aria-controls="intelPanel" aria-expanded="false">IA / INFOS</button>
+    </header>
+
+    <section class="compact-hud" aria-label="Informations de partie">
+      <span id="compactLevel">NIV. 1</span><span id="compactLoot">◆ 0/3</span><span id="compactStamina">ÉNERGIE 100%</span>
+      <span id="compactCover">OMBRE</span><span id="compactAlert">ALERTE 0%</span><span id="compactDecoys">LEURRES 2</span>
+    </section>
+
+    <section id="briefing" class="home-screen" aria-label="Accueil et sélection du niveau">
+          <p class="briefing-kicker">LE SAPHIR D’ATLAS · CAMPAGNE</p>
+          <h2>Entrez dans<br>l’ombre.</h2>
+          <p class="home-description">Volez les reliques. Déjouez les patrouilles. Trouvez la sortie.</p>
+          <section class="home-rules" aria-labelledby="rulesTitle">
+            <p class="rules-kicker">AVANT DE COMMENCER</p>
+            <h3 id="rulesTitle">Comment jouer ?</h3>
+            <ol>
+              <li><strong>Volez toutes les reliques ◆.</strong> E / VOLER à proximité.</li>
+              <li><strong>Évitez gardes et chiens.</strong> L’ombre vous accroupit et réduit la détection.</li>
+              <li><strong>Rejoignez la sortie lumineuse →</strong> après avoir tout volé.</li>
+            </ol>
+            <div class="rules-keyboard" aria-label="Commandes clavier">
+              <p><b>↑ ↓ ← →</b><span>Bouger · ZQSD / WASD aussi</span></p>
+              <p><b>E</b><span>Voler une relique</span></p>
+              <p><b>Maj ⇧</b><span>Maintenir pour sprinter</span></p>
+              <p><b>F</b><span>Lancer un leurre devant soi</span></p>
+              <p><b>C</b><span>Maintenir pour être furtif</span></p>
+              <p><b>P / Échap</b><span>Mettre en pause</span></p>
+            </div>
+            <div class="rules-touch" aria-label="Commandes téléphone">
+              <p><b>JOYSTICK</b><span>Glisser pour bouger</span></p>
+              <p><b>VOLER</b><span>Prendre une relique proche</span></p>
+              <p><b>SPRINT</b><span>Maintenir pour courir</span></p>
+              <p><b>LEURRE</b><span>Distraire les gardes</span></p>
+              <p><b>FURTIF</b><span>Activer / désactiver</span></p>
+              <p><b>Ⅱ</b><span>Mettre en pause</span></p>
+            </div>
+            <p class="rules-tip">Débutant ? Choisissez FACILE. Le sprint consomme de l’énergie et les leurres sont limités.</p>
+          </section>
+          <div class="current-mission"><span id="homeLevelNumber">NIVEAU 01 / 05</span><h3 id="homeLevelName"></h3><p id="homeLevelDescription"></p></div>
+          <p id="homeRating" class="home-rating"></p>
+          <div id="homeMap" class="home-map" aria-label="Aperçu de la carte"></div>
+          <div id="levelList" class="level-list" role="group" aria-label="Niveaux de la campagne"></div>
+          <fieldset class="difficulty-options">
+            <legend>DIFFICULTÉ</legend>
+            <button type="button" data-difficulty="easy" aria-pressed="false">FACILE</button>
+            <button type="button" data-difficulty="normal" aria-pressed="true">NORMAL</button>
+            <button type="button" data-difficulty="hard" aria-pressed="false">DIFFICILE</button>
+          </fieldset>
+          <div class="home-actions">
+            <button id="startButton" type="button">START ▶</button>
+            <button id="trainingButton" type="button" class="training-button">ENTRAÎNEMENT</button>
+          </div>
+          <div class="home-audio">
+            <button id="musicButton" class="music-toggle" type="button" aria-pressed="true">♫ MUSIQUE : ACTIVÉE</button>
+            <label class="volume-control" for="volumeSlider">VOLUME <output id="volumeOut" for="volumeSlider">100%</output><input id="volumeSlider" type="range" min="0" max="100" step="5" value="100" aria-label="Volume du jeu"></label>
+          </div>
+          <p class="home-save">Les niveaux débloqués sont sauvegardés sur cet appareil.</p>
+          <p class="home-touch-hint">Joystick : déplacer · OMBRE : accroupissement automatique<br>VOLER : relique · LEURRE : distraire</p>
+          <div class="briefing-keys">
+            <span><kbd>ZQSD</kbd> ou <kbd>WASD</kbd> déplacement</span>
+            <span><kbd>⇧</kbd> sprint</span>
+            <span><kbd>E</kbd> voler</span>
+            <span><kbd>C</kbd> s’accroupir · <kbd>F</kbd> lancer un leurre devant soi</span>
+            <span>Dans l’ombre, le personnage s’accroupit automatiquement.</span>
+          </div>
+    </section>
+    <dialog id="restartConfirm" class="restart-confirm" aria-labelledby="restartTitle" aria-describedby="restartDescription">
+      <p class="briefing-kicker">PARTIE EN PAUSE</p>
+      <h2 id="restartTitle">Recommencer le niveau ?</h2>
+      <p id="restartDescription">Le butin et le temps de cette tentative seront remis à zéro. Vos niveaux débloqués et vos records seront conservés.</p>
+      <form method="dialog" class="restart-confirm-actions">
+        <button id="cancelRestartButton" type="submit" value="cancel" autofocus>ANNULER</button>
+        <button id="confirmRestartButton" type="submit" value="restart" class="ghost">RECOMMENCER</button>
+      </form>
+      <small>Échap pour annuler et conserver la tentative en cours.</small>
+    </dialog>
+    <section class="game-grid">
+      <div class="canvas-frame">
+        <div id="canvasHost" aria-label="Simulation du musée"></div>
+        <div id="missionToast" class="mission-toast" role="status"></div>
+        <div id="detectionAlert" class="detection-alert" role="status" hidden></div>
+        <div id="pauseScreen" class="pause-screen hidden" role="dialog" aria-modal="true" aria-labelledby="pauseTitle">
+          <p class="briefing-kicker">LA NUIT VOUS ATTEND</p><h2 id="pauseTitle">Pause</h2>
+          <button id="resumeButton" type="button">REPRENDRE ▶</button>
+          <button id="restartButton" type="button" class="ghost">RECOMMENCER LE NIVEAU</button>
+          <button id="pauseMenuButton" type="button" class="ghost">ACCUEIL / NIVEAUX</button>
+          <p>Déplacez-vous dans l’ombre. Volez toutes les reliques, puis rejoignez la sortie lumineuse.</p>
+        </div>
+        <div id="endScreen" class="briefing hidden" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+          <p class="briefing-kicker" id="endKicker">RAPPORT DE MISSION</p>
+          <h2 id="endTitle">Extraction réussie</h2>
+          <p id="endText"></p>
+          <p id="endStats" class="end-stats"></p>
+          <div id="endRating" class="end-rating" role="group" aria-label="Évaluation de la mission" hidden></div>
+          <button id="nextNightButton" type="button">NUIT SUIVANTE</button>
+          <button id="endMenuButton" class="ghost" type="button">RETOUR À L’ACCUEIL</button>
+          <details class="optional-upgrades"><summary>Amélioration gratuite · facultatif</summary>
+          <div class="upgrade-options" role="group" aria-label="Amélioration entre les nuits">
+            <button data-upgrade="stamina" type="button">ENDURANCE <small>+30 points maximum</small></button>
+            <button data-upgrade="stealth" type="button">DISCRÉTION <small>−10 % de portée visuelle</small></button>
+            <button data-upgrade="decoys" type="button">LEURRES <small>+1 leurre par nuit</small></button>
+          </div>
+          <p id="upgradeStatus" aria-live="polite"></p>
+          </details>
+        </div>
+      </div>
+
+      <aside id="intelPanel" class="intel-panel" aria-label="Détails et paramètres">
+        <button id="closeDetailsButton" class="ghost close-details" type="button">FERMER LES INFOS ✕</button>
+        <section class="intel-block primary">
+          <p class="intel-label">OBJECTIF</p>
+          <p id="currentLevelLabel" class="level-label">NIVEAU 01</p>
+          <div class="objective-line"><strong id="lootCounter">0 / 3</strong><span>œuvres sécurisées</span></div>
+          <div class="progress"><i id="lootProgress"></i></div>
+        </section>
+
+        <section class="intel-block">
+          <p class="intel-label">DISCRÉTION</p>
+          <div class="meter-row"><span>Suspicion</span><strong id="suspicionValue">0%</strong></div>
+          <div class="progress danger"><i id="suspicionBar"></i></div>
+          <div class="meter-row"><span>Endurance</span><strong id="staminaValue">100%</strong></div>
+          <div class="progress stamina"><i id="staminaBar"></i></div>
+          <div class="meter-row"><span>Couverture</span><strong id="coverValue">EXPOSÉ</strong></div>
+          <div class="meter-row"><span>Visibilité</span><strong id="visibilityValue">100%</strong></div>
+          <div class="meter-row"><span>Leurres disponibles</span><strong id="decoyValue">2</strong></div>
+          <p class="tool-hint">C : accroupi · F : leurre devant vous</p>
+        </section>
+
+        <section class="intel-block">
+          <p class="intel-label">RÉSEAU DE SÉCURITÉ</p>
+          <dl class="stats">
+            <div><dt>État</dt><dd id="alarmState" data-state="calm">CALME</dd></div>
+            <div><dt>Gardes</dt><dd id="guardCount">0</dd></div>
+            <div><dt>Génération</dt><dd id="generationValue">01</dd></div>
+            <div><dt>Fitness max</dt><dd id="fitnessValue">0</dd></div>
+          </dl>
+        </section>
+
+        <section class="intel-block behaviors">
+          <p class="intel-label">COMPORTEMENTS ACTIFS</p>
+          <div id="behaviorList" class="behavior-list"></div>
+        </section>
+
+        <section class="intel-block controls">
+          <label><span>Vision des gardes</span><output id="visionOut">170</output><input id="visionSlider" type="range" min="100" max="300" value="170"></label>
+          <label><span>Vitesse globale</span><output id="speedOut">1.0×</output><input id="speedSlider" type="range" min="0.6" max="1.5" value="1" step="0.1"></label>
+          <div class="toggle-row">
+            <label><input id="debugToggle" type="checkbox"><span>Forces & perception</span></label>
+            <button id="resetLearning" type="button" class="ghost">Effacer l’apprentissage</button>
+            <button id="menuButton" type="button" class="ghost">ACCUEIL / NIVEAUX</button>
+            <button id="musicGameButton" type="button" class="ghost" aria-pressed="true">♫ MUSIQUE : ACTIVÉE</button>
+            <label class="volume-control" for="volumeGameSlider">VOLUME <output id="volumeGameOut" for="volumeGameSlider">100%</output><input id="volumeGameSlider" type="range" min="0" max="100" step="5" value="100" aria-label="Volume pendant la partie"></label>
+          </div>
+        </section>
+      </aside>
+    </section>
+
+    <div class="touch-controls" aria-label="Commandes tactiles">
+      <div id="joystick" class="joystick" role="group" aria-label="Joystick de déplacement"><span class="joystick-cross">✛</span><span id="joystickThumb" class="joystick-thumb"></span></div>
+      <div class="touch-actions">
+        <button id="touchPause" class="touch-small" aria-label="Pause">Ⅱ</button>
+        <button id="touchCrouch" class="touch-small" aria-pressed="false">FURTIF</button>
+        <button id="touchDecoy" class="touch-small">LEURRE</button>
+        <button id="touchSprint" class="touch-sprint">SPRINT</button>
+        <button id="touchSteal" class="touch-steal">VOLER <span>◆</span></button>
+      </div>
+    </div>
+    <footer>
+      <span>STEERING LAB / IA2</span>
+      <span><kbd>F3</kbd> debug · <kbd>P</kbd> pause · <kbd>R</kbd> recommencer</span>
+    </footer>
+  </main>
+
+  <script src="libraries/p5.min.js"></script>
+  <script src="js/vehicle.js"></script>
+  <script src="js/behavior-manager.js?v=difficulty-3"></script>
+  <script src="js/neuroevolution.js"></script>
+  <script src="js/museum-agent.js?v=movement-fix-1"></script>
+  <script src="js/navigation.js?v=polish-1"></script>
+  <script src="js/entities.js?v=finale-2"></script>
+  <script src="js/infiltration-tools.js"></script>
+  <script src="js/campaign.js?v=finale-2"></script>
+  <script src="js/pixel-renderer.js?v=finale-2"></script>
+  <script src="js/touch-controls.js?v=final-1"></script>
+  <script src="js/ambient-music.js?v=polish-1"></script>
+  <script src="js/sketch.js?v=restart-confirm-1"></script>
+</body>
+</html>
