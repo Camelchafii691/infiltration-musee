@@ -2,6 +2,12 @@
 
 Jeu de furtivité en JavaScript et p5.js : infiltrez un musée de nuit, récupérez toutes les reliques, puis rejoignez la sortie. Projet pédagogique sur les comportements de déplacement et la neuro-évolution.
 
+## Jouer en ligne sur ordinateur
+
+[▶ Ouvrir le jeu complet](https://camelchafii691.github.io/infiltration-musee/)
+
+Aucun téléchargement ni compte requis : ouvrez le lien, lisez les consignes et cliquez sur **START**. Les commandes au clavier sont indiquées dans le menu et ci-dessous.
+
 ![Accueil et consignes du jeu](assets/accueil.png)
 
 ## Jouer en local
