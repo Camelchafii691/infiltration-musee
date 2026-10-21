@@ -22,7 +22,7 @@ Vérification du 21 octobre 2026, effectuée sur la copie locale organisée du j
 - Gardes expressifs : durée et cooldown testés ; bulles contrôlées visuellement.
 - Finale : protection du Saphir, alarme permanente, délais des trois difficultés, cible au lieu du vol, plafond de renforts, expiration, victoire au dernier pas et réinitialisation testés. Déclenchement et écran de victoire vérifiés dans le navigateur avec une progression de test en mémoire, sans déverrouiller la sauvegarde réelle.
 
-Le workflow GitHub est préparé pour Node.js 22 et 24, mais n’a pas encore été exécuté sur GitHub. Aucun résultat CI distant ni déploiement public n’est annoncé.
+Le workflow GitHub est configuré pour vérifier le projet sous Node.js 22 et 24 à chaque push et pull request. Ses résultats sont consultables dans [GitHub Actions](https://github.com/Camelchafii691/infiltration-musee/actions). La présence du code sur GitHub ne constitue pas un déploiement du jeu : GitHub Pages doit être activé séparément.
 
 ## Ce qui n’est pas confirmé
 
